@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDGE GAP TAX TXT to CSV Converter - by Rocky Mount IT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            max-width: 80%; /* Changed from 600px to 90% */
+            width: 90%;
+            margin: auto; /* Center the container */
+        }
+        h2 {
+            margin-top: 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        input[type="file"] {
+            margin-bottom: 1rem;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #45a049;
+        }
+        .file-list {
+            margin-top: 2rem;
+        }
+        .file-list h2 {
+            margin-bottom: 0.5rem;
+        }
+        .file-list ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        .file-list li {
+            margin-bottom: 0.25rem;
+        }
+        .download-link {
+            display: inline-block;
+            margin-top: 1rem;
+            background-color: #008CBA;
+            color: white;
+            padding: 0.5rem 1rem;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .download-link:hover {
+            background-color: #007B9A;
+        }
+        .flash-messages {
+            margin-bottom: 1rem;
+        }
+        .flash-message {
+            padding: 0.5rem;
+            border-radius: 4px;
+            margin-bottom: 0.5rem;
+        }
+        .flash-message.success {
+            background-color: #DFF2BF;
+            color: #4F8A10;
+        }
+        .flash-message.error {
+            background-color: #FFBABA;
+            color: #D8000C;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edgecombe GAP Tax Billing file Converter</h2>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" name="folder" webkitdirectory directory multiple>
+            <input type="submit" value="Convert">
+        </form>
+        
+        {% if file_names %}
+        <div class="file-list">
+            <h2>Processed Files:</h2>
+            <ul>
+                {% for file_name in file_names %}
+                <li>{{ file_name }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+        {% endif %}
+        
+        {% if output_filename %}
+        <a href="{{ url_for('download_file') }}" class="download-link">Download {{ output_filename }}</a>
+        {% endif %}
+        
+        <footer>
+            <p style="font-size: smaller;">&copy; 2023 Rocky Mount IT. All rights reserved.</p>
+        </footer>
+    </div>
+</body>
+</html>
