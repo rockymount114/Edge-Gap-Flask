@@ -103,7 +103,7 @@
         
         <form method="post" enctype="multipart/form-data">
             <input type="file" name="folder" webkitdirectory directory multiple>
-            <input type="submit" value="Convert">
+            <input type="submit" value="Convert"> 
         </form>
         
         {% if file_names %}
@@ -118,7 +118,7 @@
         {% endif %}
         
         {% if output_filename %}
-        <a href="{{ url_for('download_file') }}" class="download-link">Download {{ output_filename }}</a>
+        <a href="{{ url_for('download_file') }}" class="download-link">Download {{ output_filename.replace('downloads/','') }}</a>
         {% endif %}
         
         <footer>

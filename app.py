@@ -12,6 +12,10 @@ UPLOAD_FOLDER = 'uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
+DOWNLOAD_FOLDER = 'downloads'
+if not os.path.exists(DOWNLOAD_FOLDER):
+    os.makedirs(DOWNLOAD_FOLDER)
+    
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max-limit
 
@@ -43,7 +47,7 @@ def convert_to_csv(folder_path, widths, columns):
 
 def export_to_fixed_width(df, min_year, max_year, widths):
     # Define the output file path
-    output_file = f"download/{min_year}-{max_year} Edge Gap Billing_{len(df)}.txt"
+    output_file = f"{DOWNLOAD_FOLDER}/{min_year}-{max_year} Edge Gap Billing_{len(df)}.txt"
     
     with open(output_file, 'w') as f:
         for index, row in df.iterrows():
@@ -53,6 +57,7 @@ def export_to_fixed_width(df, min_year, max_year, widths):
                 cell_value = str(row[i])[:width]  # Truncate to width
                 line += cell_value.ljust(width)  # Pad with spaces
             f.write(line.rstrip() + '\n')  # Write the line to the file, removing trailing spaces
+    return output_file
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -88,26 +93,29 @@ def upload_file():
             
             min_year = min(years) if years else 0
             max_year = max(years) if years else 0
+            
             output_filename = f"{min_year}-{max_year} Edge Gap Billing_{len(df)}.csv"
             output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
-            df.to_csv(output_path, index=False, header=False)  ### set False if don't need file header
+            # df.to_csv(output_path, index=False, header=False)  ### set False if don't need file header
             
-            export_to_fixed_width(df, min_year, max_year, widths)
-            
+            # export to fixed width csv to match the format of the billing file
+            txt_file = export_to_fixed_width(df, min_year, max_year, widths)
+            # output_filename = txt_file
+            # output_path = os.path.join(app.config['DOWNLOAD_FOLDER'], output_filename)
+
             # Clean up temporary folder
             for file in os.listdir(folder_path):
                 os.remove(os.path.join(folder_path, file))
             os.rmdir(folder_path)
             
             session['file_names'] = file_names
-            session['output_filename'] = output_filename
+            session['output_filename'] = txt_file
             
             flash('Conversion successful!', 'success')
             
+            # Removed preview rendering
+            return redirect(url_for('upload_file'))  # Redirect back to upload page after conversion
             
-            
-            return redirect(url_for('upload_file'))
-        
         except Exception as e:
             flash(f'An error occurred: {str(e)}', 'error')
             return redirect(url_for('upload_file'))
@@ -118,9 +126,12 @@ def upload_file():
 
 @app.route('/download')
 def download_file():
-    output_filename = session.get('output_filename')
+    # Ensure output_filename is initialized
+    output_filename = session.get('output_filename', None) 
+
     if output_filename:
-        output_path = os.path.join(app.config['UPLOAD_FOLDER'], output_filename)
+        output_filename = output_filename.replace('.csv','.txt')  
+        output_path = f"{output_filename}"
         return send_file(output_path, as_attachment=True)
     else:
         flash('No file to download', 'error')

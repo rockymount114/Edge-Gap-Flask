@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Converted Dataset Preview</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> <!-- Added Bootstrap for styling -->
     <style>
         .data {
             border-collapse: collapse;
@@ -17,11 +17,10 @@
     </style>
 </head>
 <body>
-    <h1>Converted Dataset Preview</h1>
-    {% for table in tables %}
-        <h2>{{ titles[loop.index0] }}</h2>
-        {{ table|safe }}
-    {% endfor %}
-    <a href="/">Upload More Files</a>
+    <div class="container"> <!-- Added container for Bootstrap styling -->
+        <h1>Converted Dataset Preview</h1>
+        <div>{{ preview_data|safe }}</div>  <!-- Render the DataFrame HTML -->
+        <a href="/">Upload More Files</a>
+    </div>
 </body>
 </html>
