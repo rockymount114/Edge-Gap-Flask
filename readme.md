@@ -4,9 +4,9 @@ This is a simple web application that allows you to convert GAPS Tax files to Mu
 
 ## Features
 
-- Upload CSV files
-- Convert CSV to TXT
-- Download the converted TXT file
+- Upload Gap Tax files
+- Convert it to TXT (filtered for "C02" only)
+- Download the converted TXT file (this file is ready to be uploaded into Munis, end the file name such as `_123` is the record number)
 
 ## Installation
 
